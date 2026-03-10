@@ -1,0 +1,15 @@
+# --- CONFIGURAÇÕES DA BASE DE DADOS ---
+# Altera para as tuas credenciais de acesso ao PostgreSQL
+DB_USER = "user"
+DB_PASS = "password" 
+DB_HOST = "host"
+DB_PORT = "port" 
+DB_NAME = "db_name"
+
+SCHEMA_NAME = "schema_name" 
+
+# False -> não cria o GeoPackage no disco
+# True -> cria o GeoPackage localmente antes de enviar para o Postgres
+SAVE_LOCAL_FILE = False  
+
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"

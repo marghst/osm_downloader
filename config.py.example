@@ -1,0 +1,47 @@
+import os
+
+# Caminhos de Pastas
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
+LOG_DIR = os.path.join(BASE_DIR, "logs")
+
+# Configurações da CAOP (Entrada)
+CAOP_PATH = os.path.join(DATA_DIR, "Continente_CAOP2025.gpkg")
+TABELA_CAOP = "cont_freguesias"
+COLUNA_DICO = "dtmnfr"  # Verifica se na tua tabela é 'dicoregt' ou 'dico'
+MUNICIPIO_ALVO = "0206"  # Exemplo: Castro Verde (dtmn)
+
+# Filtros OpenStreetMap (OSMnx)
+OSM_FILTERS = {
+    "roads": {"highway": True}, # estradas
+    "pois": {
+        "amenity": True, # amenidades
+        "craft": True, # atividades artesanais
+        "historic": True, # locais históricos
+        "office": True, # escritórios
+        "shop": True, # lojas
+        "tourism": True, # turismo
+        "leisure": True # lazer
+    },
+    "places": {"place": True} # lugares (cidades, vilas, aldeias, etc.)
+}
+
+# Configurações de Sistema
+TIMEOUT = 600
+LOG_FILE = os.path.join(LOG_DIR, "osm_update.log")
+
+
+# Configurações de Saída
+OUTPUT_GPKG = os.path.join(OUTPUT_DIR, f"OSM_data_municipio_{MUNICIPIO_ALVO}.gpkg")
+
+# Definir colunas específicas para cada camada
+LAYER_COLUMNS = {
+    "roads": ['id', 'element', 'name', 'highway', 'geometry'],
+    "pois": ['id', 'element', 'name', 'brand', 'operator', 'amenity', 'craft', 'historic', 'office', 'shop', 'tourism', 'leisure', 'geometry'],
+    "places": ['id', 'element', 'place', 'name', 'geometry', 'alt_name']
+}
+
+# Lista auxiliar
+ALL_COLUMNS = ['id', 'element', 'name', 'brand', 'operator', 'alt_name', 'highway', 'amenity', 'shop', 'place', 'craft', 'historic', 'office', 'tourism', 'leisure']
+

@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+database_config.py
+config.py
+data/*.gpkg
+logs/*.log
+output/
