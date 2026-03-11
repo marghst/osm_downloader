@@ -4,3 +4,4 @@ sqlalchemy
 psycopg2
 geoalchemy2
 pyogrio
+shapely
