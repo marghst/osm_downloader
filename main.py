@@ -6,6 +6,8 @@ from datetime import datetime
 from sqlalchemy import create_engine, text
 import config
 import database_config
+from shapely.ops import transform
+import pyproj
 
 # Configuração do Logging
 os.makedirs(os.path.dirname(config.LOG_FILE), exist_ok=True)
@@ -44,21 +46,30 @@ def export_to_process():
                 os.remove(config.OUTPUT_GPKG)
                 logger.info(f"Ficheiro antigo {config.OUTPUT_GPKG} removido para nova escrita.")
 
-        # 3. Obter Geometria da CAOP
+        # --- 3. Obter Geometria da CAOP ---
         if not os.path.exists(config.CAOP_PATH):
             logger.error(f"CAOP não encontrada em: {config.CAOP_PATH}")
             return
 
-        # Filtro flexível para distrito (2 dígitos), município (4 dígitos) ou freguesia (6 dígitos)
+        # Filtro para apanhar todas as freguesias do município (ex: 0105%)
         filtro_sql = f"{config.COLUNA_DICO} LIKE '{config.MUNICIPIO_ALVO}%'"
+        
+        # Carregar o GeoDataFrame
         municipio_gdf = gpd.read_file(config.CAOP_PATH, layer=config.TABELA_CAOP, where=filtro_sql)
 
         if municipio_gdf.empty:
             logger.warning(f"Código {config.MUNICIPIO_ALVO} não encontrado na CAOP.")
             return
 
-        municipio_mask = municipio_gdf.to_crs("EPSG:4326").union_all()
-        logger.info("Máscara de recorte gerada com sucesso.")
+        logger.info(f"Geometrias encontradas: {len(municipio_gdf)} polígonos.")
+
+        # mask para recorte
+        temp_geometry_3763 = municipio_gdf.to_crs("EPSG:3763").union_all().buffer(50)
+
+        # converter de volta para WGS84 (EPSG:4326) usando um GeoSeries temporário
+        municipio_mask = gpd.GeoSeries([temp_geometry_3763], crs="EPSG:3763").to_crs("EPSG:4326").iloc[0]
+        
+        logger.info("Máscara de recorte (WGS84) gerada com sucesso.")
 
         # 4. Processar cada camada do OSM
         for layer_name, tags in config.OSM_FILTERS.items():
