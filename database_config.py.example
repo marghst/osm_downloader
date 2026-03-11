@@ -8,8 +8,8 @@ DB_NAME = "db_name"
 
 SCHEMA_NAME = "schema_name" 
 
-# False -> não cria o GeoPackage no disco
-# True -> cria o GeoPackage localmente antes de enviar para o Postgres
-SAVE_LOCAL_FILE = False  
+# Opções de destino dos dados
+SAVE_LOCAL_FILE = False  # True: Cria o GeoPackage localmente
+UPLOAD_TO_POSTGRES = True   # True: Envia os dados para a Base de Dados 
 
 DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
